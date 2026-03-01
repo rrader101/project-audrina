@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Days 1–5: Ryan's 24-Hour Cycle</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👶</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --border: #2a2a44;
+    --text: #f0eef6;
+    --text-dim: #9994b8;
+    --feed: #e8b4f8;
+    --feed-bg: rgba(232, 180, 248, 0.08);
+    --feed-border: rgba(232, 180, 248, 0.2);
+    --baby: #a8d8ea;
+    --baby-bg: rgba(168, 216, 234, 0.08);
+    --baby-border: rgba(168, 216, 234, 0.2);
+    --meal: #f8c8dc;
+    --meal-bg: rgba(248, 200, 220, 0.08);
+    --meal-border: rgba(248, 200, 220, 0.2);
+    --house: #f0c674;
+    --house-bg: rgba(240, 198, 116, 0.08);
+    --house-border: rgba(240, 198, 116, 0.2);
+    --rest: #7ecf8e;
+    --rest-bg: rgba(126, 207, 142, 0.08);
+    --rest-border: rgba(126, 207, 142, 0.2);
+    --you: #6eb5ff;
+    --you-bg: rgba(110, 181, 255, 0.08);
+    --you-border: rgba(110, 181, 255, 0.2);
+    --work: #c4a8ff;
+    --work-bg: rgba(196, 168, 255, 0.08);
+    --work-border: rgba(196, 168, 255, 0.2);
+    --gym: #ff9f6e;
+    --gym-bg: rgba(255, 159, 110, 0.08);
+    --gym-border: rgba(255, 159, 110, 0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: var(--bg);
+    padding: 28px 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .header .sub {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .header .mantra {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--feed);
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  /* Timeline */
+  .timeline {
+    padding: 16px;
+    padding-bottom: 30px;
+  }
+
+  .hour-group {
+    position: relative;
+    padding-left: 54px;
+    margin-bottom: 4px;
+  }
+
+  .hour-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 44px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 10px;
+  }
+
+  .hour-line {
+    position: absolute;
+    left: 50px;
+    top: 14px;
+    width: 8px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .block {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border-left: none;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .block .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .block .details { flex: 1; }
+  .block .title { font-weight: 600; margin-bottom: 1px; }
+  .block .desc { font-size: 12px; opacity: 0.7; }
+  .block .extra {
+    display: none;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .block.expanded .extra { display: block; }
+  .block .duration {
+    font-size: 11px;
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .block.feed { background: var(--feed-bg); }
+  .block.feed .title { color: var(--feed); }
+  .block.baby { background: var(--baby-bg); }
+  .block.baby .title { color: var(--baby); }
+  .block.meal { background: var(--meal-bg); }
+  .block.meal .title { color: var(--meal); }
+  .block.house { background: var(--house-bg); }
+  .block.house .title { color: var(--house); }
+  .block.rest { background: var(--rest-bg); }
+  .block.rest .title { color: var(--rest); }
+  .block.you { background: var(--you-bg); }
+  .block.you .title { color: var(--you); }
+  .block.work { background: var(--work-bg); }
+  .block.work .title { color: var(--work); }
+  .block.gym { background: var(--gym-bg); }
+  .block.gym .title { color: var(--gym); }
+  .block.nap { background: var(--rest-bg); }
+  .block.nap .title { color: var(--rest); }
+
+  /* Time window tooltip */
+  .block { position: relative; cursor: pointer; }
+  .time-window {
+    display: none;
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2a2a44;
+    color: #f0eef6;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 50;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .time-window::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #2a2a44;
+    rotate: 45deg;
+  }
+  .block.show-time .time-window { display: block; }
+
+  /* Period dividers */
+  .period {
+    text-align: center;
+    padding: 14px 0 8px;
+    margin: 8px 0;
+    position: relative;
+  }
+
+  .period::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 50%;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .period span {
+    position: relative;
+    background: var(--bg);
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  /* Cycle counter */
+  .cycle-badge {
+    display: inline-block;
+    background: rgba(232, 180, 248, 0.12);
+    border: 1px solid var(--feed-border);
+    color: var(--feed);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 4px;
+  }
+
+  /* Notes section */
+  .notes {
+    margin: 16px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .notes h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .notes p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .notes .highlight { color: var(--feed); font-weight: 600; }
+
+  /* Active block highlight */
+  .block.active-now {
+    background: rgba(245, 217, 78, 0.85);
+  }
+  .block.active-now .title { color: var(--bg); }
+  .block.active-now .desc { color: var(--bg); opacity: 0.6; }
+  .block.active-now .duration { color: var(--bg); }
+  .block.active-now .title::after {
+    content: ' — NOW';
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--bg);
+    letter-spacing: 0.5px;
+    opacity: 0.5;
+  }
+
+  /* Legend filtering */
+  .legend-item {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .legend-item:hover { border-color: var(--border); }
+  .legend-item.active-filter {
+    border-color: var(--text-dim);
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+
+  /* Hidden blocks when filtering */
+  .block.filter-hidden { display: none; }
+  .hour-group.filter-hidden { display: none; }
+  .period.filter-hidden { display: none; }
+  .cycle-badge.filter-hidden { display: none; }
+
+  /* Desktop layout */
+  @media (min-width: 768px) {
+    .timeline { max-width: 800px; margin: 0 auto; }
+    .notes { max-width: 800px; margin: 16px auto; }
+    .legend { max-width: 800px; margin: 0 auto; padding: 14px 16px; }
+    .header h1 { font-size: 24px; }
+    .block { padding: 12px 16px; }
+    .block .desc { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🛌 Days 1–5: Ryan's 24-Hour Cycle</h1>
+  <div class="sub">Valentina is horizontal. You handle everything.</div>
+  <div class="mantra">"Protect the nest."</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item" data-cat="feed"><div class="legend-dot" style="background:var(--feed)"></div>Feeding</div>
+  <div class="legend-item" data-cat="baby"><div class="legend-dot" style="background:var(--baby)"></div>Baby Care</div>
+  <div class="legend-item" data-cat="meal"><div class="legend-dot" style="background:var(--meal)"></div>Val's Meals</div>
+  <div class="legend-item" data-cat="house"><div class="legend-dot" style="background:var(--house)"></div>Household</div>
+  <div class="legend-item" data-cat="work"><div class="legend-dot" style="background:var(--work)"></div>Haven</div>
+  <div class="legend-item" data-cat="rest,nap"><div class="legend-dot" style="background:var(--rest)"></div>Sleep/Nap</div>
+  <div class="legend-item" data-cat="you"><div class="legend-dot" style="background:var(--you)"></div>You</div>
+</div>
+
+<div class="timeline">
+
+<!-- ===== OVERNIGHT ===== -->
+<div class="period"><span>🌙 Overnight</span></div>
+
+<div class="hour-group">
+  <div class="hour-label">12 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 1</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Change diaper. Check umbilical cord area. This wakes her up for a good feed.</div>
+        <div class="extra">Wipe front to back. Check cord stump — should be dry and darkening. If red, oozing, or smells, call Dr. Carlos. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Help Valentina position baby. Log in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>. If bottle — you feed.</div>
+        <div class="extra">Keep room dark — use red/dim night light only. If breastfeeding, offer both sides, 10–15 min each. Burp gently between sides. Have a burp cloth on your shoulder.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block rest">
+      <span class="icon">😴</span>
+      <div class="details">
+        <div class="title">Everyone Sleeps</div>
+        <div class="desc">Baby back in bassinet. You sleep when baby sleeps.</div>
+        <div class="extra">Baby on back, flat surface, nothing in bassinet. No blankets, pillows, or stuffed animals. Swaddle arms in, keep room 68–72°F. White noise helps.</div>
+      </div>
+      <span class="duration">~2 hrs</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">3 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 2</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Change diaper. This wakes her up for a good feed. Keep it quick and dim.</div>
+        <div class="extra">At night, be quick and quiet — dim light, fresh diaper pre-opened and ready. Minimal talking, minimal eye contact. You want her just awake enough to latch well. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Same routine. Keep lights dim. Minimal stimulation. Log in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>.</div>
+        <div class="extra">If baby won't latch, try skin-to-skin first — bare chest against yours for a few minutes, then offer again. Don't stress. If she still won't take it, try again in 15 min.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block rest">
+      <span class="icon">😴</span>
+      <div class="details">
+        <div class="title">Everyone Sleeps</div>
+        <div class="desc">Back down. Sleep while you can.</div>
+        <div class="extra">If you can't fall back asleep within 15 min, don't fight it — close your eyes and rest. Even lying still helps. Avoid your phone — blue light kills melatonin.</div>
+      </div>
+      <span class="duration">~2 hrs</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EARLY MORNING ===== -->
+<div class="period"><span>🌅 Early Morning</span></div>
+
+<div class="hour-group">
+  <div class="hour-label">6 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 3</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Full change. Check umbilical cord area. This wakes her up for a good morning feed.</div>
+        <div class="extra">By Day 3–4, expect 6+ wet diapers and 3–4 dirty ones per day. Stool transitions from black (meconium) → green → yellow/seedy. This is normal. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Morning feed. Help Valentina position. Log in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>.</div>
+        <div class="extra">Morning feeds tend to be the strongest — Val's supply peaks overnight. Let her find her groove. Have nipple cream (lanolin) ready if she's sore. Offer water before she starts.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">7 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block you">
+      <span class="icon">☕</span>
+      <div class="details">
+        <div class="title">Your Morning Reset</div>
+        <div class="desc">Coffee, shower, brush teeth. Take 15 min for yourself before the day starts.</div>
+        <div class="extra">This is the one reset that keeps you sane. Don't skip it. Even if the night was brutal — shower, brush teeth, fresh clothes. It resets your brain.</div>
+      </div>
+      <span class="duration">15 min</span>
+    </div>
+    <div class="block meal">
+      <span class="icon">🍳</span>
+      <div class="details">
+        <div class="title">Valentina's Breakfast</div>
+        <div class="desc">Bring to bed. High protein + fruit. Refill water / electrolytes.</div>
+        <div class="extra">Meal ideas: Scrambled eggs + avocado toast · Overnight oats with berries + honey · Protein smoothie (banana, PB, oat milk, spinach) · Greek yogurt parfait with granola · Egg + cheese quesadilla</div>
+      </div>
+      <span class="duration">20 min</span>
+    </div>
+    <div class="block meal">
+      <span class="icon">🥤</span>
+      <div class="details">
+        <div class="title">Hydration Check</div>
+        <div class="desc">Full glass of water + coconut water by the bed. She needs to drink constantly.</div>
+        <div class="extra">Goal: 100+ oz/day while breastfeeding. Coconut water is great for electrolytes. Body Armor or Liquid IV are also solid options. Keep a 32 oz bottle filled by the bed at all times.</div>
+      </div>
+      <span class="duration">5 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">8 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block house">
+      <span class="icon">🧺</span>
+      <div class="details">
+        <div class="title">Laundry Cycle 1</div>
+        <div class="desc">Start a load — baby clothes, burp cloths, swaddles. There will be a lot.</div>
+        <div class="extra">Use fragrance-free detergent for baby stuff. Wash on warm. You'll run 2–3 loads a day minimum. Keep a dedicated hamper for baby items near the changing station.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block house">
+      <span class="icon">🍽️</span>
+      <div class="details">
+        <div class="title">Kitchen Reset</div>
+        <div class="desc">Dishes from overnight. Wipe counters. Prep bottles if needed.</div>
+        <div class="extra">If using bottles: wash with hot soapy water + bottle brush, sterilize once daily. Keep a drying rack by the sink. Prep 2–3 bottles ahead if formula or pumped milk.</div>
+      </div>
+      <span class="duration">15 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MORNING ===== -->
+<div class="period"><span>☀️ Morning</span></div>
+
+<div class="hour-group">
+  <div class="hour-label">9 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 4</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Change diaper. Track wet/dirty in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>. This wakes her up for a good feed.</div>
+        <div class="extra">Log every diaper in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a> — wet vs. dirty. Pediatrician will ask about output at first checkup. It's the #1 indicator that baby is eating enough. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Support + log. Watch latch — call Renata if issues.</div>
+        <div class="extra">Watch for hunger cues: rooting, lip smacking, fists to mouth. Don't wait for crying — that's a late cue. Good latch = wide mouth, lips flanged out, chin touching breast.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block baby">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Skin-to-Skin (Val)</div>
+        <div class="desc">Place Audrina on Valentina's chest. Great bonding window while baby is alert.</div>
+        <div class="extra">Bare chest on bare chest, baby in just a diaper. Regulates baby's heart rate, temp, and breathing. Helps with milk supply. Cover both with a light blanket.</div>
+      </div>
+      <span class="duration">20 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">10 AM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block work">
+      <span class="icon">💻</span>
+      <div class="details">
+        <div class="title">Haven — Variable Work (High Interrupt Risk)</div>
+        <div class="desc">Baby napping, Val resting. Your best focused work window — but expect interruptions. Prioritize async tasks; abandon if feeding is fussy.</div>
+        <div class="extra">Noise-canceling headphones help but keep one ear open. Phone on silent, Slack on DND. Prioritize the one thing that moves Haven forward most. If baby wakes, pause — she comes first. Laptop from bed or couch works fine.</div>
+      </div>
+      <span class="duration">1.5 hrs</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">11:30</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block meal">
+      <span class="icon">🥗</span>
+      <div class="details">
+        <div class="title">Valentina's Lunch Prep</div>
+        <div class="desc">Something warm + nourishing. Soups, rice bowls, etc. Refill electrolytes.</div>
+        <div class="extra">Meal ideas: Tortilla soup with black beans + avocado · Salmon rice bowl · Caprese wrap with fresh mozzarella · Loaded sweet potato (black beans, cheese, sour cream) · Leftover dinner reheated — batch cooking is your friend. 🍲 Serve warm, easy-to-digest recovery meals (e.g., Chupe/Sancocho style — broth-based, nutrient-dense, comforting).</div>
+      </div>
+      <span class="duration">25 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MIDDAY ===== -->
+<div class="period"><span>🌤️ Midday</span></div>
+
+<div class="hour-group">
+  <div class="hour-label">12 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 5</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Change diaper. Quick outfit swap if needed (blowout happens). This wakes her up for a good feed.</div>
+        <div class="extra">Blowouts are inevitable. Keep 2–3 extra onesies nearby. For blowout protocol: lay baby on a towel, peel the onesie down (not over the head — the shoulder flaps are designed for this), warm wipe-down. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Midday feed. Log in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>. You should be halfway to 8+ feeds.</div>
+        <div class="extra">If using a bottle this feed, warm to body temp. Pace-feed: hold baby semi-upright, pause every few sips to mimic breastfeeding rhythm. Don't rush it.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">1 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block you">
+      <span class="icon">🍔</span>
+      <div class="details">
+        <div class="title">Your Lunch</div>
+        <div class="desc">Eat something real. You can't run on fumes.</div>
+        <div class="extra">Don't just graze — sit down and eat a full meal. Protein + carbs. You're burning energy like crazy. Leftovers, a sandwich, whatever is fast and filling.</div>
+      </div>
+      <span class="duration">15 min</span>
+    </div>
+    <div class="block house">
+      <span class="icon">🧺</span>
+      <div class="details">
+        <div class="title">Laundry Cycle 2 + Quick Tidy</div>
+        <div class="desc">Switch loads, fold Cycle 1. Quick tidy of bedroom + bathroom.</div>
+        <div class="extra">Don't aim for perfect — just functional. Clear surfaces, fresh sheets if needed, empty trash. The goal is that Val's space always feels clean and calm.</div>
+      </div>
+      <span class="duration">20 min</span>
+    </div>
+    <div class="block work">
+      <span class="icon">💻</span>
+      <div class="details">
+        <div class="title">Haven — Work Block 2</div>
+        <div class="desc">Catch up on emails, Slack, smaller tasks. Good window for calls too.</div>
+        <div class="extra">Good block for calls/meetings since baby just fed and is likely down. Batch your replies. If something can wait until evening sprint, let it wait.</div>
+      </div>
+      <span class="duration">1 hr</span>
+    </div>
+    <div class="block nap">
+      <span class="icon">💤</span>
+      <div class="details">
+        <div class="title">Power Nap</div>
+        <div class="desc">Set an alarm. 30 min max. You'll need this to get through the evening.</div>
+        <div class="extra">20–30 min is the sweet spot — longer and you hit deep sleep, which makes you groggier. Dark room, phone across the room so you actually get up when the alarm goes off.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AFTERNOON ===== -->
+<div class="period"><span>🌇 Afternoon</span></div>
+
+<div class="hour-group">
+  <div class="hour-label">3 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 6</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Change diaper. Umbilical check — keep cord exposed. This wakes her up for a good feed.</div>
+        <div class="extra">If using disposable diapers, fold the front waistband down so it doesn't rub the cord stump. For diaper rash: air dry for a few min before putting a new one on. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Afternoon feed. Check in — is Val comfortable? Adjust pillows, refill water. Log in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>.</div>
+        <div class="extra">Afternoon can be fussy — babies are often more awake and overstimulated. If she won't settle after feeding, try gentle bouncing, shushing, or a dark room.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block meal">
+      <span class="icon">🍯</span>
+      <div class="details">
+        <div class="title">Valentina's Snack</div>
+        <div class="desc">Something light — fruit, honey sticks, nuts. Keep her energy up.</div>
+        <div class="extra">Snack ideas: Apple slices + almond butter · Trail mix · Hummus + pita chips · Cheese + crackers · Banana with honey · Energy balls (make ahead)</div>
+      </div>
+      <span class="duration">5 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">4 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block you">
+      <span class="icon">🏋️</span>
+      <div class="details">
+        <div class="title">Gym / High-Intensity Walk (Outdoor Vitamin D)</div>
+        <div class="desc">Flex this hour based on baby's rhythm. Gym, long walk, or home workout. Get outside if you can — sunlight matters.</div>
+        <div class="extra">Getting out of the house is as much mental as physical. Even a 30 min walk counts. If going to the gym, keep it to 45–60 min max. Text Val before you leave and when you're heading back. Outdoor walks give you Vitamin D and reset your circadian rhythm — both huge when sleep is fragmented.</div>
+      </div>
+      <span class="duration">1 hr</span>
+    </div>
+    <div class="block work">
+      <span class="icon">💻</span>
+      <div class="details">
+        <div class="title">Haven — Work Block 3</div>
+        <div class="desc">Quick sprint before dinner. Wrap up anything from the day.</div>
+        <div class="extra">Short block — use it to close loops, not start new ones. Send final replies, update your task list for tomorrow. Don't let this bleed into dinner time.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block nap">
+      <span class="icon">💤</span>
+      <div class="details">
+        <div class="title">Power Nap</div>
+        <div class="desc">Quick recharge before the evening cycle. Set alarm — don't oversleep.</div>
+        <div class="extra">Evening is often the hardest stretch — cluster feeding, fussiness, exhaustion. This nap banks energy for it. Same rules: 30 min max, alarm set, dark room.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EVENING ===== -->
+<div class="period"><span>🌆 Evening</span></div>
+
+<div style="margin: 4px 0 12px; padding: 10px 14px; background: rgba(240, 198, 116, 0.12); border: 1px solid rgba(240, 198, 116, 0.25); border-radius: 10px; font-size: 13px; color: var(--house); line-height: 1.5; text-align: center;">
+  ⚠️ <strong>Cluster Feeding Zone (6–9 PM):</strong> High support required. Keep water and pillows ready for Valentina.
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">6 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 7</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper Change</div>
+        <div class="desc">Change diaper. Full wipe down if needed. This wakes her up for the evening feed.</div>
+        <div class="extra">End-of-day bath isn't needed daily — every 2–3 days is fine for newborns. A warm wipe-down with a damp cloth works on off-days. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Evening feed. Cluster feeding may start — baby might want to eat more often now. Log in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>.</div>
+        <div class="extra">Cluster feeding is normal evenings — baby may want to eat every 30–60 min. Don't worry, it helps build Val's supply. Just keep supporting and logging.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block baby">
+      <span class="icon">👶</span>
+      <div class="details">
+        <div class="title">Dad's Bonding Time</div>
+        <div class="desc">Your turn — skin-to-skin, eye contact, talk to her. She knows your voice.</div>
+        <div class="extra">Shirt off, Audrina on your chest in just a diaper. Make eye contact (she can see 8–12 inches). Talk softly, narrate what you're doing, sing if you want. This builds your bond and gives Val a real break. Do this every day — it matters more than you think.</div>
+      </div>
+      <span class="duration">15 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">7 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block meal">
+      <span class="icon">🍲</span>
+      <div class="details">
+        <div class="title">Valentina's Dinner</div>
+        <div class="desc">Warm, filling meal to bed. This is your biggest cook of the day. Hydration refill.</div>
+        <div class="extra">Meal ideas: Pasta with shrimp + garlic · Salmon + roasted veggies · Veggie stir-fry + rice with tofu or fish · Black bean chili (prep in AM, slow cooker) · Sheet pan fish tacos + sweet potato · Burrito bowls with beans + rice · Anything a friend drops off — say yes to every meal offer. 🍲 Serve warm, easy-to-digest recovery meals (e.g., Chupe/Sancocho style — broth-based, nutrient-dense, comforting).</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+    <div class="block you">
+      <span class="icon">🍽️</span>
+      <div class="details">
+        <div class="title">Your Dinner</div>
+        <div class="desc">Eat while things are calm. Prep anything for overnight (bottles, snacks by bed).</div>
+        <div class="extra">Overnight station checklist: 2 bottles of water for Val, burp cloths, 3–4 diapers + wipes, fresh onesie, phone charger, dim night light. Set it all up now so you're not scrambling at 2 AM.</div>
+      </div>
+      <span class="duration">20 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">8 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block house">
+      <span class="icon">🍽️</span>
+      <div class="details">
+        <div class="title">Evening Kitchen Reset + The Station</div>
+        <div class="desc">Dishes, wipe down, then set up "The Station": 32 oz water, phone charger, snacks, and <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a> log within Val's reach.</div>
+        <div class="extra">Clean kitchen = clean headspace for the night. Doesn't need to be spotless. Just clear the counters, run the dishwasher. Then set up Val's nightstand: 32 oz water bottle, phone charger, snacks (granola bar, crackers), burp cloths, 3–4 diapers + wipes, dim night light, and her phone with <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a> open. Everything within arm's reach.</div>
+      </div>
+      <span class="duration">15 min</span>
+    </div>
+    <div class="block house">
+      <span class="icon">🧺</span>
+      <div class="details">
+        <div class="title">Final Laundry</div>
+        <div class="desc">Fold remaining. Set out tomorrow's outfits for Audrina.</div>
+        <div class="extra">Pick out 2 outfits for tomorrow (blowout backup). Stack them on the changing table. Fold what you can, don't stress about the rest — it'll be there tomorrow.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block work">
+      <span class="icon">💻</span>
+      <div class="details">
+        <div class="title">Haven — Evening Sprint</div>
+        <div class="desc">Last push before night mode. Review tomorrow's priorities. Wrap up loose ends.</div>
+        <div class="extra">Write down your top 3 priorities for tomorrow so you don't have to think about work overnight. Close the laptop at 9 PM — hard stop. The work will be there tomorrow.</div>
+      </div>
+      <span class="duration">45 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NIGHT ===== -->
+<div class="period"><span>🌙 Night</span></div>
+
+<div class="hour-group">
+  <div class="hour-label">9 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="cycle-badge">Cycle 8</div>
+    <div class="block baby">
+      <span class="icon">🧷</span>
+      <div class="details">
+        <div class="title">Diaper + Night Prep</div>
+        <div class="desc">Fresh diaper. This wakes her just enough for the last feed. Dim all lights.</div>
+        <div class="extra">Swaddle snug but not tight — two fingers should fit between the blanket and chest. Arms in, hips loose. Velcro swaddles (Love to Dream, Halo) make this easier. Dry Cord Care only. Keep diaper folded down to expose cord to air.</div>
+      </div>
+      <span class="duration">10 min</span>
+    </div>
+    <div class="block feed">
+      <span class="icon">🤱</span>
+      <div class="details">
+        <div class="title">Feeding</div>
+        <div class="desc">Last evening feed before settling in. You should be at 8+ feeds by now — check <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>.</div>
+        <div class="extra">Dream feed option: gently feed baby without fully waking her. Can help extend the first sleep stretch. If count is under 8, wake to feed — don't let her skip. Swaddle after feed — she'll drift off.</div>
+      </div>
+      <span class="duration">30 min</span>
+    </div>
+  </div>
+</div>
+
+<div class="hour-group">
+  <div class="hour-label">10 PM</div>
+  <div class="hour-line"></div>
+  <div class="blocks">
+    <div class="block rest">
+      <span class="icon">😴</span>
+      <div class="details">
+        <div class="title">First Sleep Block</div>
+        <div class="desc">Go down when baby goes down. This is your longest stretch — protect it.</div>
+        <div class="extra">Don't "just check one more thing" on your phone. Go down when baby goes down — every minute counts. You'll be up again in 2–3 hours. Protect this window like it's sacred.</div>
+      </div>
+      <span class="duration">~2 hrs</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Key Reminders -->
+<div class="notes">
+  <h3>🔑 Daily Reminders</h3>
+  <p><span class="highlight">8+ feedings in 24 hours</span> — non-negotiable. Track every one in <a href="https://huckleberrycare.com/" target="_blank" style="color: #5c6bc0; font-weight: bold;">Huckleberry</a>.</p>
+  <p><span class="highlight">If bottle is used, Ryan feeds.</span> This is your job.</p>
+  <p><span class="highlight">Sleep when baby sleeps.</span> You can't protect the nest if you're running on empty.</p>
+  <p><span class="highlight">Hydration for Val is constant.</span> Refill her water every time you're near the bed.</p>
+  <p><span class="highlight">Visitors = no.</span> Filter calls. Protect the bubble.</p>
+  <p><span class="highlight">Umbilical cord:</span> Dry Cord Care only. Keep diaper folded down to expose cord to air. No alcohol, no Q-tips.</p>
+  <p><span class="highlight">Haven work: ~3.75 hrs/day.</span> Deep work AM, catch-up midday, sprint evening. Laptop stays close.</p>
+  <p><span class="highlight">Gym: 1 hr/day @ 4 PM.</span> Flexible — shift earlier or later based on baby's rhythm. Don't skip it.</p>
+  <p><span class="highlight">Naps: 2 × 30 min.</span> After lunch work block + after gym. Set an alarm — don't let it bleed.</p>
+  <p><span class="highlight">Dad's bonding time: 15 min/day @ 6 PM.</span> Skin-to-skin, eye contact, talk to her. She's learning your voice. This isn't optional.</p>
+</div>
+
+<script>
+(function() {
+  // ── Helpers ──
+  function parseStart(txt) {
+    txt = txt.trim();
+    if (txt === '11:30') return 11*60+30;
+    const m = txt.match(/^(\d+)\s*(AM|PM)$/i);
+    if (!m) return null;
+    let h = parseInt(m[1]);
+    const ap = m[2].toUpperCase();
+    if (ap === 'AM' && h === 12) h = 0;
+    else if (ap === 'PM' && h !== 12) h += 12;
+    return h * 60;
+  }
+
+  function parseDur(txt) {
+    txt = txt.trim().replace('~','');
+    if (txt.match(/(\d+\.?\d*)\s*hrs?/i)) return parseFloat(RegExp.$1) * 60;
+    if (txt.match(/(\d+)\s*min/i)) return parseInt(RegExp.$1);
+    return 30;
+  }
+
+  function fmt(mins) {
+    mins = ((mins % 1440) + 1440) % 1440;
+    let h = Math.floor(mins / 60);
+    let m = Math.round(mins % 60);
+    const ap = h >= 12 ? 'PM' : 'AM';
+    if (h === 0) h = 12;
+    else if (h > 12) h -= 12;
+    return h + ':' + String(m).padStart(2,'0') + ' ' + ap;
+  }
+
+  // ── 1. Compute time windows + store on blocks ──
+  var allBlocks = [];
+  document.querySelectorAll('.hour-group').forEach(function(group) {
+    var label = group.querySelector('.hour-label');
+    if (!label) return;
+    var t = parseStart(label.textContent);
+    if (t === null) return;
+
+    group.querySelectorAll('.block').forEach(function(block) {
+      var durEl = block.querySelector('.duration');
+      if (!durEl) return;
+      var dur = parseDur(durEl.textContent);
+      var start = t;
+      var end = t + dur;
+
+      block._startMin = start;
+      block._endMin = end;
+
+      var tip = document.createElement('div');
+      tip.className = 'time-window';
+      tip.textContent = fmt(start) + ' – ' + fmt(end);
+      block.appendChild(tip);
+
+      allBlocks.push(block);
+      t = end;
+    });
+  });
+
+  // ── 2. Highlight active block based on current time ──
+  function highlightActive() {
+    var now = new Date();
+    var nowMin = now.getHours() * 60 + now.getMinutes();
+    var found = false;
+    allBlocks.forEach(function(b) {
+      b.classList.remove('active-now');
+    });
+    for (var i = 0; i < allBlocks.length; i++) {
+      var b = allBlocks[i];
+      var s = b._startMin;
+      var e = b._endMin;
+      if (nowMin >= s && nowMin < e) {
+        b.classList.add('active-now');
+        found = true;
+        break;
+      }
+    }
+    // If nothing matched (gap between groups), highlight next upcoming
+    if (!found) {
+      for (var j = 0; j < allBlocks.length; j++) {
+        if (allBlocks[j]._startMin > nowMin) {
+          allBlocks[j].classList.add('active-now');
+          break;
+        }
+      }
+    }
+  }
+  highlightActive();
+  setInterval(highlightActive, 60000); // refresh every minute
+
+  // ── 3. Click to expand, hover for tooltip ──
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.legend-item')) return;
+    var block = e.target.closest('.block');
+    if (block && block.querySelector('.extra')) {
+      block.classList.toggle('expanded');
+    }
+  });
+
+  document.querySelectorAll('.block').forEach(function(b) {
+    b.addEventListener('mouseenter', function() { b.classList.add('show-time'); });
+    b.addEventListener('mouseleave', function() { b.classList.remove('show-time'); });
+  });
+
+  // ── 4. Legend category filtering ──
+  var activeFilter = null;
+  var legendItems = document.querySelectorAll('.legend-item[data-cat]');
+
+  function getBlockCat(block) {
+    var cl = block.classList;
+    var cats = ['feed','baby','meal','house','rest','you','work','gym','nap'];
+    for (var i = 0; i < cats.length; i++) {
+      if (cl.contains(cats[i])) return cats[i];
+    }
+    return null;
+  }
+
+  function applyFilter(cats) {
+    // cats is an array of category names, or null to show all
+    document.querySelectorAll('.block').forEach(function(b) {
+      if (!cats) { b.classList.remove('filter-hidden'); return; }
+      var bc = getBlockCat(b);
+      b.classList.toggle('filter-hidden', cats.indexOf(bc) === -1);
+    });
+
+    // Hide empty hour-groups
+    document.querySelectorAll('.hour-group').forEach(function(g) {
+      var visible = g.querySelectorAll('.block:not(.filter-hidden)');
+      g.classList.toggle('filter-hidden', visible.length === 0);
+    });
+
+    // Hide cycle badges if parent group filtered
+    document.querySelectorAll('.cycle-badge').forEach(function(cb) {
+      var group = cb.closest('.hour-group');
+      if (group) cb.classList.toggle('filter-hidden', group.classList.contains('filter-hidden'));
+    });
+
+    // Hide period dividers if no visible groups follow until next divider
+    var periods = document.querySelectorAll('.period');
+    periods.forEach(function(p) {
+      var next = p.nextElementSibling;
+      var hasVisible = false;
+      while (next && !next.classList.contains('period')) {
+        if (next.classList.contains('hour-group') && !next.classList.contains('filter-hidden')) {
+          hasVisible = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      p.classList.toggle('filter-hidden', !hasVisible);
+    });
+  }
+
+  legendItems.forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var catStr = item.getAttribute('data-cat');
+      var cats = catStr.split(',');
+
+      if (activeFilter === catStr) {
+        // Toggle off — show all
+        activeFilter = null;
+        legendItems.forEach(function(li) { li.classList.remove('active-filter'); });
+        applyFilter(null);
+      } else {
+        activeFilter = catStr;
+        legendItems.forEach(function(li) { li.classList.remove('active-filter'); });
+        item.classList.add('active-filter');
+        applyFilter(cats);
+      }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

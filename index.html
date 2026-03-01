@@ -343,33 +343,6 @@
     margin-right: 4px;
   }
 
-  /* Postpartum day tracker */
-  .day-tracker {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 16px;
-    padding: 4px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-  }
-
-  .day-block {
-    flex: 1;
-    text-align: center;
-    padding: 8px 4px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .day-block.active-day { color: white; }
-  .day-block.range1.active-day { background: var(--phase1); }
-  .day-block.range2.active-day { background: var(--phase2); }
-  .day-block.range3.active-day { background: var(--phase3); }
-  .day-block:not(.active-day) { color: var(--text-dim); }
-
   /* Quick contacts */
   .contact-bar {
     display: flex;
@@ -488,6 +461,13 @@
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
+  }
+
+  /* Desktop layout */
+  @media (min-width: 768px) {
+    .phase { max-width: 800px; margin: 0 auto; }
+    .phase-nav { max-width: 800px; margin: 0 auto; }
+    .contact-bar { max-width: 800px; left: 50%; transform: translateX(-50%); }
   }
 </style>
 </head>
@@ -735,31 +715,6 @@
     <div class="goal">15 days of deep healing. Ryan protects the "nest."</div>
   </div>
 
-  <!-- Day Tracker -->
-  <div class="card" style="overflow: visible;">
-    <div class="card-header" style="cursor: default; flex-direction: column; gap: 12px; padding-bottom: 16px;">
-      <span class="card-title" style="text-align: center;">Recovery Day Tracker</span>
-      <div class="day-tracker">
-        <div class="day-block range1" data-day="1" onclick="selectDay(this)">1</div>
-        <div class="day-block range1" data-day="2" onclick="selectDay(this)">2</div>
-        <div class="day-block range1" data-day="3" onclick="selectDay(this)">3</div>
-        <div class="day-block range1" data-day="4" onclick="selectDay(this)">4</div>
-        <div class="day-block range1" data-day="5" onclick="selectDay(this)">5</div>
-        <div class="day-block range2" data-day="6" onclick="selectDay(this)">6</div>
-        <div class="day-block range2" data-day="7" onclick="selectDay(this)">7</div>
-        <div class="day-block range2" data-day="8" onclick="selectDay(this)">8</div>
-        <div class="day-block range2" data-day="9" onclick="selectDay(this)">9</div>
-        <div class="day-block range2" data-day="10" onclick="selectDay(this)">10</div>
-        <div class="day-block range3" data-day="11" onclick="selectDay(this)">11</div>
-        <div class="day-block range3" data-day="12" onclick="selectDay(this)">12</div>
-        <div class="day-block range3" data-day="13" onclick="selectDay(this)">13</div>
-        <div class="day-block range3" data-day="14" onclick="selectDay(this)">14</div>
-        <div class="day-block range3" data-day="15" onclick="selectDay(this)">15</div>
-      </div>
-      <div id="day-description" style="text-align: center; font-size: 13px; color: var(--text-dim);"></div>
-    </div>
-  </div>
-
   <!-- Days 1-5 -->
   <div class="card" onclick="toggleCard(this)">
     <div class="card-header">
@@ -770,6 +725,7 @@
     <div class="card-body">
       <div class="card-content">
         <div class="item"><span class="item-bullet">🔑</span><span class="item-text">Valentina is <span class="highlight">horizontal</span>. Ryan handles ALL meals, chores, and diaper changes.</span></div>
+        <a href="postpartum-day.html" onclick="event.stopPropagation()" style="display: block; text-align: center; margin-top: 10px; padding: 10px 14px; background: rgba(248, 164, 200, 0.08); border: 1px solid rgba(248, 164, 200, 0.2); border-radius: 10px; text-decoration: none; font-size: 13px; font-weight: 600; color: var(--accent2);">View Full 24-Hour Cycle →</a>
       </div>
     </div>
   </div>
@@ -971,23 +927,6 @@
     }
   }
 
-  // Day Tracker
-  const dayDescriptions = {
-    '1-5': '🛌 IN the Bed — Valentina is horizontal. Ryan handles everything.',
-    '6-10': '🛋️ ON the Bed — Valentina can sit up. Light movement only.',
-    '11-15': '🚶 AROUND the Bed — Short walks in the house only.'
-  };
-
-  function selectDay(el) {
-    document.querySelectorAll('.day-block').forEach(d => d.classList.remove('active-day'));
-    el.classList.add('active-day');
-    const day = parseInt(el.dataset.day);
-    let range;
-    if (day <= 5) range = '1-5';
-    else if (day <= 10) range = '6-10';
-    else range = '11-15';
-    document.getElementById('day-description').textContent = dayDescriptions[range];
-  }
 </script>
 
 </body>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Valentina's Menu</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card-hover: #22223a;
+    --accent: #e8b4f8;
+    --accent2: #f8c8dc;
+    --accent3: #a8d8ea;
+    --text: #f0eef6;
+    --text-dim: #9994b8;
+    --border: #2a2a44;
+    --success: #7ecf8e;
+    --warning: #f0c674;
+    --yellow: #f8e06e;
+    --green: #7ecf8e;
+    --purple: #c49ef8;
+    --pink: #f8a4c8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .header {
+    background: var(--bg);
+    padding: 28px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .header .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(248, 200, 220, 0.08);
+    border: 1px solid rgba(248, 200, 220, 0.15);
+    transition: all 0.2s;
+  }
+
+  .back-link:active { background: rgba(248, 200, 220, 0.15); }
+
+  .instruction {
+    text-align: center;
+    padding: 16px 20px 8px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .instruction strong { color: var(--accent2); }
+
+  /* Category Sections */
+  .category {
+    padding: 12px 16px 0;
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0 8px;
+  }
+
+  .category-emoji { font-size: 20px; }
+
+  .category-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .category-title.yellow { color: var(--yellow); }
+  .category-title.green { color: var(--green); }
+  .category-title.purple { color: var(--purple); }
+  .category-title.pink { color: var(--pink); }
+  .category-title.accent3 { color: var(--accent3); }
+
+  /* Menu Items */
+  .menu-item {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .menu-item:active { transform: scale(0.98); }
+
+  .menu-item .radio {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .menu-item.selected .radio {
+    border-color: var(--success);
+    background: var(--success);
+  }
+
+  .menu-item.selected .radio::after {
+    content: '✓';
+    color: #0f0f1a;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .menu-item.selected {
+    border-color: rgba(126, 207, 142, 0.4);
+    background: rgba(126, 207, 142, 0.06);
+  }
+
+  .menu-item .label {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Dinner Builder */
+  .dinner-section {
+    padding: 0 16px;
+  }
+
+  .dinner-sub {
+    margin-bottom: 8px;
+  }
+
+  .dinner-sub-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    padding: 8px 0 4px;
+  }
+
+  .dinner-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .dinner-chip {
+    padding: 8px 14px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .dinner-chip:active { transform: scale(0.96); }
+
+  .dinner-chip.selected {
+    border-color: rgba(196, 158, 248, 0.5);
+    background: rgba(196, 158, 248, 0.12);
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  /* Send Button Area */
+  .send-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    z-index: 100;
+    display: flex;
+    gap: 8px;
+    transition: all 0.3s;
+  }
+
+  .send-area.hidden { transform: translateY(100%); opacity: 0; pointer-events: none; }
+
+  .send-btn {
+    flex: 1;
+    padding: 14px 12px;
+    border-radius: 14px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    color: #0f0f1a;
+  }
+
+  .send-btn:active { transform: scale(0.97); }
+  .send-btn.sms { background: var(--success); }
+  .send-btn.email { background: var(--accent3); }
+
+  .content-wrapper { padding-bottom: 90px; }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 16px;
+  }
+
+  /* Selection summary */
+  .selection-preview {
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    min-height: 28px;
+  }
+
+  .selection-preview strong { color: var(--accent2); }
+
+  /* Snack section note */
+  .section-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 0 16px 8px;
+    font-style: italic;
+  }
+
+  @media (min-width: 768px) {
+    .content-wrapper { max-width: 800px; margin: 0 auto; }
+    .send-area { max-width: 800px; left: 50%; transform: translateX(-50%); }
+    .send-area.hidden { transform: translateX(-50%) translateY(100%); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍽️ Valentina's Menu</h1>
+  <div class="subtitle">Tap what you're craving — Ryan gets notified!</div>
+  <a href="index.html" class="back-link">← Back to Guide</a>
+</div>
+
+<div class="content-wrapper">
+
+  <div class="instruction">Pick <strong>one item per meal</strong>, then hit send at the bottom.</div>
+
+  <!-- ===== BREAKFAST ===== -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-emoji">💛</span>
+      <span class="category-title yellow">Breakfast</span>
+    </div>
+  </div>
+  <div class="menu-group" data-group="breakfast">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Spinach omelette + 2 toasts">
+      <div class="radio"></div>
+      <span class="label">Spinach omelette + 2 toasts</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="3 Almond tortillas + perico eggs + salsa">
+      <div class="radio"></div>
+      <span class="label">3 Almond tortillas + perico eggs + salsa</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Hard boiled eggs + avocado + smoothie (berries + vegan protein)">
+      <div class="radio"></div>
+      <span class="label">Hard boiled eggs + avocado + smoothie (berries + vegan protein)</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Grilled cheese sandwich + scramble eggs">
+      <div class="radio"></div>
+      <span class="label">Grilled cheese sandwich + scramble eggs</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Waffles + scramble eggs">
+      <div class="radio"></div>
+      <span class="label">Waffles + scramble eggs</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="100gr of plantain + omelette + avocado">
+      <div class="radio"></div>
+      <span class="label">100gr of plantain + omelette + avocado</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Arepa + sardines (tomato)">
+      <div class="radio"></div>
+      <span class="label">Arepa + sardines (tomato)</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== LUNCH ===== -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-emoji">💚</span>
+      <span class="category-title green">Lunch</span>
+    </div>
+  </div>
+  <div class="menu-group" data-group="lunch">
+    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Salmon + brown rice + greens">
+      <div class="radio"></div>
+      <span class="label">Salmon + brown rice + greens</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Lentils + white basmati rice + hemp heart seeds + sauerkraut">
+      <div class="radio"></div>
+      <span class="label">Lentils + white basmati rice + hemp heart seeds + sauerkraut</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Pasta + tuna + red sauce">
+      <div class="radio"></div>
+      <span class="label">Pasta + tuna + red sauce</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Air fry tofu + vegetables (zucchini, green beans)">
+      <div class="radio"></div>
+      <span class="label">Air fry tofu + vegetables (zucchini, green beans)</span>
+    </div>
+    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Mahi-mahi + mashed potatoes">
+      <div class="radio"></div>
+      <span class="label">Mahi-mahi + mashed potatoes</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== DINNER ===== -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-emoji">💜</span>
+      <span class="category-title purple">Dinner</span>
+    </div>
+  </div>
+  <div class="section-note">Pick a protein, a side, and a salad/veggie:</div>
+
+  <div class="dinner-section">
+    <div class="dinner-sub">
+      <div class="dinner-sub-title">Protein</div>
+      <div class="dinner-grid" id="dinner-protein">
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-protein')" data-value="Garlic shrimp">Garlic shrimp</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-protein')" data-value="Seafood medley">Seafood medley</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-protein')" data-value="Ground turkey">Ground turkey</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-protein')" data-value="Scallops">Scallops</div>
+      </div>
+    </div>
+
+    <div class="dinner-sub">
+      <div class="dinner-sub-title">Side</div>
+      <div class="dinner-grid" id="dinner-side">
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-side')" data-value="Mac & cheese (protein pasta)">Mac & cheese (protein pasta)</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-side')" data-value="Potatoes">Potatoes</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-side')" data-value="Pasta (veggie craft)">Pasta (veggie craft)</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-side')" data-value="Sweet potato">Sweet potato</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-side')" data-value="Quinoa">Quinoa</div>
+      </div>
+    </div>
+
+    <div class="dinner-sub">
+      <div class="dinner-sub-title">Salad / Veggies</div>
+      <div class="dinner-grid" id="dinner-salad">
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-salad')" data-value="Mixed greens + dressing">Mixed greens + dressing</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-salad')" data-value="Steamed spinach">Steamed spinach</div>
+        <div class="dinner-chip" onclick="selectChip(this, 'dinner-salad')" data-value="Carrot salad + coconut oil">Carrot salad + coconut oil</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== SNACKS ===== -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-emoji">🍫</span>
+      <span class="category-title accent3">Snacks</span>
+    </div>
+  </div>
+  <div class="section-note">Pick one (or more!) snacks:</div>
+  <div class="dinner-section">
+    <div class="dinner-grid" id="snacks">
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Rice cakes + nut butter">Rice cakes + nut butter</div>
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Coconut yogurt + protein granola">Coconut yogurt + protein granola</div>
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Protein bars">Protein bars</div>
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Protein smoothie (chocolate + almond milk)">Protein smoothie (choco + almond milk)</div>
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Chocolate bars (Hu)">Chocolate bars (Hu)</div>
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Berry smoothie (berries + almond butter)">Berry smoothie (berries + almond butter)</div>
+    </div>
+  </div>
+
+  <div style="height: 16px;"></div>
+  <div class="selection-preview" id="preview"></div>
+
+</div>
+
+<!-- Send Buttons -->
+<div class="send-area hidden" id="send-area">
+  <a id="sms-btn" href="#" class="send-btn sms">📱 Text Ryan</a>
+  <a id="email-btn" href="#" class="send-btn email">📧 Email Ryan</a>
+</div>
+
+<script>
+  const selections = {
+    breakfast: null,
+    lunch: null,
+    'dinner-protein': null,
+    'dinner-side': null,
+    'dinner-salad': null,
+    snacks: []
+  };
+
+  function selectItem(el, group) {
+    // Deselect siblings
+    el.parentElement.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[group] = el.dataset.value;
+    updateSendButtons();
+  }
+
+  function selectChip(el, group) {
+    // Single select within group
+    document.getElementById(group).querySelectorAll('.dinner-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[group] = el.dataset.value;
+    updateSendButtons();
+  }
+
+  function toggleSnack(el) {
+    el.classList.toggle('selected');
+    // Rebuild snacks array
+    selections.snacks = [];
+    document.getElementById('snacks').querySelectorAll('.dinner-chip.selected').forEach(c => {
+      selections.snacks.push(c.dataset.value);
+    });
+    updateSendButtons();
+  }
+
+  function buildMessage() {
+    let lines = [];
+    lines.push("🍽️ Valentina's Order:");
+    lines.push("");
+
+    if (selections.breakfast) {
+      lines.push("💛 Breakfast: " + selections.breakfast);
+    }
+    if (selections.lunch) {
+      lines.push("💚 Lunch: " + selections.lunch);
+    }
+
+    const dp = selections['dinner-protein'];
+    const ds = selections['dinner-side'];
+    const dv = selections['dinner-salad'];
+    if (dp || ds || dv) {
+      let dinnerParts = [];
+      if (dp) dinnerParts.push(dp);
+      if (ds) dinnerParts.push(ds);
+      if (dv) dinnerParts.push(dv);
+      lines.push("💜 Dinner: " + dinnerParts.join(" + "));
+    }
+
+    if (selections.snacks.length > 0) {
+      lines.push("🍫 Snacks: " + selections.snacks.join(", "));
+    }
+
+    return lines.join("\n");
+  }
+
+  function hasAnySelection() {
+    return selections.breakfast || selections.lunch ||
+           selections['dinner-protein'] || selections['dinner-side'] || selections['dinner-salad'] ||
+           selections.snacks.length > 0;
+  }
+
+  function updateSendButtons() {
+    const area = document.getElementById('send-area');
+    const preview = document.getElementById('preview');
+
+    if (hasAnySelection()) {
+      area.classList.remove('hidden');
+      const msg = buildMessage();
+      const encoded = encodeURIComponent(msg);
+
+      // SMS - works on both iOS and Android
+      document.getElementById('sms-btn').href = "sms:6143286219&body=" + encoded;
+      // Email
+      document.getElementById('email-btn').href = "mailto:ryanradernyc@gmail.com?subject=" + encodeURIComponent("🍽️ Valentina's Meal Order") + "&body=" + encoded;
+
+      // Preview
+      let parts = [];
+      if (selections.breakfast) parts.push(selections.breakfast);
+      if (selections.lunch) parts.push(selections.lunch);
+      if (selections['dinner-protein']) parts.push(selections['dinner-protein']);
+      preview.innerHTML = '<strong>Selected:</strong> ' + parts.slice(0, 2).join(', ') + (parts.length > 2 ? '...' : '');
+    } else {
+      area.classList.add('hidden');
+      preview.innerHTML = '';
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Project Audrina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card-hover: #22223a;
+    --accent: #e8b4f8;
+    --accent2: #f8c8dc;
+    --accent3: #a8d8ea;
+    --text: #f0eef6;
+    --text-dim: #9994b8;
+    --border: #2a2a44;
+    --success: #7ecf8e;
+    --warning: #f0c674;
+    --danger: #e88b8b;
+    --phase1: #b48ef8;
+    --phase2: #6eb5ff;
+    --phase3: #f8a4c8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .header .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .header .due-info {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .header .due-info span {
+    background: rgba(232, 180, 248, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(232, 180, 248, 0.15);
+  }
+
+  /* Phase Navigation */
+  .phase-nav {
+    display: flex;
+    gap: 6px;
+    padding: 12px 16px;
+    background: var(--bg);
+    position: sticky;
+    top: 106px;
+    z-index: 99;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .phase-nav button {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .phase-nav button.active {
+    color: white;
+    border-color: transparent;
+  }
+
+  .phase-nav button[data-phase="1"].active { background: var(--phase1); }
+  .phase-nav button[data-phase="2"].active { background: var(--phase2); }
+  .phase-nav button[data-phase="3"].active { background: var(--phase3); }
+
+  /* Phase Sections */
+  .phase {
+    display: none;
+    padding: 16px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .phase.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .phase-header {
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .phase-header.p1 { background: linear-gradient(135deg, rgba(180, 142, 248, 0.15), rgba(180, 142, 248, 0.05)); border: 1px solid rgba(180, 142, 248, 0.2); }
+  .phase-header.p2 { background: linear-gradient(135deg, rgba(110, 181, 255, 0.15), rgba(110, 181, 255, 0.05)); border: 1px solid rgba(110, 181, 255, 0.2); }
+  .phase-header.p3 { background: linear-gradient(135deg, rgba(248, 164, 200, 0.15), rgba(248, 164, 200, 0.05)); border: 1px solid rgba(248, 164, 200, 0.2); }
+
+  .phase-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+
+  .phase-header .goal {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    gap: 10px;
+    user-select: none;
+  }
+
+  .card-header:active { background: var(--card-hover); }
+
+  .card-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  .card-chevron {
+    color: var(--text-dim);
+    font-size: 18px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .card.open .card-chevron { transform: rotate(180deg); }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .card.open .card-body { max-height: 600px; }
+
+  .card-content {
+    padding: 0 16px 14px 16px;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 14px;
+  }
+
+  .item:last-child { border-bottom: none; }
+
+  .item-bullet {
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .item-text { flex: 1; color: var(--text); line-height: 1.5; }
+  .item-text .highlight { color: var(--accent2); font-weight: 600; }
+  .item-text .info { color: var(--accent3); font-weight: 600; }
+  .item-text .warn { color: var(--warning); font-weight: 600; }
+  .item-text .danger { color: var(--danger); font-weight: 600; }
+  .item-text .success { color: var(--success); font-weight: 600; }
+
+  /* Alert Banner */
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(248, 164, 200, 0.15), rgba(232, 180, 248, 0.1));
+    border: 1px solid rgba(248, 164, 200, 0.25);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .alert-banner .alert-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+
+  .alert-banner .alert-text {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* Checklist style items */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 14px;
+  }
+
+  .check-item:last-child { border-bottom: none; }
+
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: transparent;
+    color: transparent;
+    font-size: 14px;
+  }
+
+  .check-box.checked {
+    background: var(--success);
+    border-color: var(--success);
+    color: #0f0f1a;
+  }
+
+  .check-text { flex: 1; line-height: 1.5; }
+  .check-text.checked-text { opacity: 0.4; text-decoration: line-through; }
+
+  /* Yes/No badges */
+  .badge-yes {
+    display: inline-block;
+    background: rgba(126, 207, 142, 0.15);
+    color: var(--success);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  .badge-no {
+    display: inline-block;
+    background: rgba(232, 139, 139, 0.15);
+    color: var(--danger);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  /* Postpartum day tracker */
+  .day-tracker {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+  }
+
+  .day-block {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .day-block.active-day { color: white; }
+  .day-block.range1.active-day { background: var(--phase1); }
+  .day-block.range2.active-day { background: var(--phase2); }
+  .day-block.range3.active-day { background: var(--phase3); }
+  .day-block:not(.active-day) { color: var(--text-dim); }
+
+  /* Quick contacts */
+  .contact-bar {
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+  }
+
+  .contact-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .contact-btn:active { background: var(--card-hover); transform: scale(0.97); }
+  .contact-btn.emergency { border-color: rgba(232, 139, 139, 0.3); background: rgba(232, 139, 139, 0.08); }
+
+  /* Bottom spacing for fixed bar */
+  .content-wrapper { padding-bottom: 80px; }
+
+  /* Contraction Timer */
+  .timer-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .timer-display {
+    font-size: 48px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    margin: 12px 0;
+    letter-spacing: 2px;
+  }
+
+  .timer-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .timer-btn {
+    padding: 14px 32px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 8px 4px;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .timer-btn:active { transform: scale(0.95); }
+  .timer-btn.start { background: var(--success); color: #0f0f1a; }
+  .timer-btn.stop { background: var(--danger); color: white; }
+  .timer-btn.reset { background: var(--card-hover); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .timer-history {
+    margin-top: 16px;
+    text-align: left;
+  }
+
+  .timer-history h4 {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .contraction-log {
+    font-size: 13px;
+    color: var(--text);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .contraction-log .duration { color: var(--accent); font-weight: 600; }
+  .contraction-log .interval { color: var(--text-dim); }
+
+  .five-one-one {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .five-one-one.not-ready { background: rgba(240, 198, 116, 0.1); color: var(--warning); border: 1px solid rgba(240, 198, 116, 0.2); }
+  .five-one-one.ready { background: rgba(126, 207, 142, 0.15); color: var(--success); border: 1px solid rgba(126, 207, 142, 0.3); animation: pulse 1.5s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍼 PROJECT AUDRINA</h1>
+  <div class="subtitle">The Protector's Guide</div>
+  <div class="due-info">
+    <span>📅 March 12, 2026</span>
+    <span>🏥 Memorial Miramar</span>
+  </div>
+</div>
+
+<div class="phase-nav">
+  <button data-phase="1" class="active" onclick="showPhase(1)">🏠 Pre-Labor</button>
+  <button data-phase="2" onclick="showPhase(2)">🚗 Hospital</button>
+  <button data-phase="3" onclick="showPhase(3)">🛌 Postpartum</button>
+</div>
+
+<div class="content-wrapper">
+
+<!-- ==================== PHASE 1: PRE-LABOR ==================== -->
+<div class="phase active" id="phase-1">
+
+  <div class="phase-header p1">
+    <h2>🏠 Pre-Labor Phase</h2>
+    <div class="goal">Stay home as long as possible. Keep Valentina safe, calm, and flooded with oxytocin.</div>
+  </div>
+
+  <!-- Contraction Timer -->
+  <div class="timer-section">
+    <div class="timer-label">Contraction Timer</div>
+    <div class="timer-display" id="timer-display">0:00</div>
+    <div>
+      <button class="timer-btn start" id="timer-start" onclick="toggleTimer()">START</button>
+      <button class="timer-btn reset" onclick="resetTimer()">RESET</button>
+    </div>
+    <div id="contraction-history" class="timer-history"></div>
+    <div id="five-one-one-status"></div>
+  </div>
+
+  <!-- Oxytocin Environment -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🕯️</span>
+      <span class="card-title">Oxytocin Environment</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Dim all house lights — use LED candles or low lamps</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Start the labor playlist on 🔊 Bluetooth speaker</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Diffuse relaxing 🌿 essential oils (Lavender / Frankincense)</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Place the <span class="highlight">Medallita de Jose Gregorio H.</span> nearby as her focus anchor</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Affection & Physical Connection -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">💞</span>
+      <span class="card-title">Affection & Connection</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">🤗</span><span class="item-text">Prioritize physical touch: <span class="highlight">Hugging, "Slow Dancing," Spooning</span> in bed</span></div>
+        <div class="item"><span class="item-bullet">🙌</span><span class="item-text">Use the <span class="highlight">"Double Hip Squeeze"</span> during contractions to relieve pressure</span></div>
+        <div class="item"><span class="item-bullet">💬</span><span class="item-text">Remind her of affirmations: <span class="highlight">"Yo confío"</span> and <span class="highlight">"Las contracciones son mi aliada"</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movement & Comfort -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🧘</span>
+      <span class="card-title">Movement & Comfort</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">⚽</span><span class="item-text">Encourage the <span class="highlight">"Figure 8"</span> movement on the exercise ball</span></div>
+        <div class="item"><span class="item-bullet">💆</span><span class="item-text">Perform <span class="highlight">"Fascia Release"</span> back and hip massages using oil</span></div>
+        <div class="item"><span class="item-bullet">🌡️</span><span class="item-text">Apply <span class="info">heat patches</span> or <span class="info">cold compresses</span> to her lower back as needed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fueling -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🥤</span>
+      <span class="card-title">Fueling</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">🥥</span><span class="item-text">Keep her sipping <span class="info">coconut water or electrolytes</span> constantly</span></div>
+        <div class="item"><span class="item-bullet">🍯</span><span class="item-text">Encourage light snacks (<span class="info">honey sticks</span>) to maintain energy</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Protector Admin -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🛡️</span>
+      <span class="card-title">Protector Admin</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Car has a charge 🔋 and car seat is ready</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Filter all outside calls/texts — she should NOT be on her phone</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">All bags by the front door: Hospital 🎒, Baby 👶, Snack 🥨</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== PHASE 2: HOSPITAL ==================== -->
+<div class="phase" id="phase-2">
+
+  <div class="phase-header p2">
+    <h2>🚗 Active Labor & Hospital</h2>
+    <div class="goal">Execute the transition and advocate for the Birth Intentions.</div>
+  </div>
+
+  <!-- 5-1-1 Alert -->
+  <div class="alert-banner">
+    <div class="alert-title">⏱️ 5-1-1 Rule</div>
+    <div class="alert-text">Contractions <strong>5 min apart</strong> • <strong>1 min long</strong> • for <strong>1 hour</strong></div>
+  </div>
+
+  <!-- The Departure -->
+  <div class="card open" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🏁</span>
+      <span class="card-title">The Departure</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Confirm <span class="warn">5-1-1</span>: Contractions 5 min apart, 1 min long, for 1 hour</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">📞 <span class="highlight">Call Dr. Carlos</span> — <a href="tel:3057531328" style="color: var(--accent3); text-decoration: none;">305-753-1328</a> — Voice call only</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">📞 <span class="highlight">Call Doula Renata</span> — <a href="tel:3056069364" style="color: var(--accent3); text-decoration: none;">305-606-9364</a></span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">📍 Navigate to <span class="info">Memorial Hospital Miramar</span>: 1901 SW 172nd Ave</span></div>
+        <div class="item"><span class="item-bullet">🕐</span><span class="item-text"><span class="info">Mon–Fri 7am–5pm:</span> Main Entrance (Valet)</span></div>
+        <div class="item"><span class="item-bullet">🌙</span><span class="item-text"><span class="info">After Hours / Weekends:</span> ER Entrance</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">📝 Handle all intake paperwork. Tell them: <span class="highlight">"We are pre-registered"</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hospital Room Setup -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🏥</span>
+      <span class="card-title">Room Setup</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Set A/C, dim lights, start music, diffuse oils</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Request <span class="info">Novii Wireless Monitor</span> (no belts/wires)</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Request <span class="info">Peanut Ball</span> and <span class="info">Exercise Ball</span></span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">Request minimal personnel in the room</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Guardrails -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🚫</span>
+      <span class="card-title">The Guardrails</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">⚠️</span><span class="item-text"><span class="danger">VACUUM RULE:</span> Staff must consult <span class="warn">YOU (Ryan)</span> before using a vacuum</span></div>
+        <div class="item"><span class="item-bullet">💉</span><span class="item-text"><span class="warn">EPIDURAL:</span> Only when she asks. If she can't move her toes → call crew to adjust dose</span></div>
+        <div class="item"><span class="item-bullet">🩺</span><span class="item-text"><span class="warn">VAGINAL EXAMS:</span> Request strict minimum</span></div>
+        <div class="item"><span class="item-bullet">👥</span><span class="item-text"><span class="warn">STAFFING:</span> Minimal personnel in room to maintain calm</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Birth -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">✨</span>
+      <span class="card-title">Birth & Immediate After</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">🤱 <span class="highlight">Skin-to-Skin:</span> Baby Audrina goes immediately to Valentina's chest</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">⏳ <span class="highlight">Delayed Cord Clamping:</span> Wait 1–3 min or until cord stops pulsing / looks white</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">✂️ <span class="highlight">The Snip:</span> Ryan clamps and cuts the cord</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">🧴 <span class="highlight">Vernix:</span> Do NOT wipe off the white "fat" — rub it into her skin</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">🤫 <span class="highlight">Family Time:</span> Ask for quiet time before any infant testing</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newborn Medical -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">👶</span>
+      <span class="card-title">Newborn Medical & Admin</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet"><span class="badge-yes">YES</span></span><span class="item-text">Vitamin K, Eye Ointment, Oxygen, Hearing, Ankle (Metabolic) test</span></div>
+        <div class="item"><span class="item-bullet"><span class="badge-no">NO</span></span><span class="item-text">Hepatitis B vaccine, baths, formula, or pacifiers</span></div>
+        <div style="height: 8px"></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">📲 <span class="highlight">Call Nelson</span> within 24 hours to add Audrina to insurance</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">🗓️ Schedule pediatrician checkup for <span class="info">48–72 hours</span> after discharge</span></div>
+        <div class="check-item"><div class="check-box" onclick="event.stopPropagation(); toggleCheck(this)">✓</div><span class="check-text">👀 Audrina stays with <span class="warn">Ryan at ALL times</span> if not with Valentina</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== PHASE 3: POSTPARTUM ==================== -->
+<div class="phase" id="phase-3">
+
+  <div class="phase-header p3">
+    <h2>🛌 5-5-5 Postpartum Plan</h2>
+    <div class="goal">15 days of deep healing. Ryan protects the "nest."</div>
+  </div>
+
+  <!-- Day Tracker -->
+  <div class="card" style="overflow: visible;">
+    <div class="card-header" style="cursor: default; flex-direction: column; gap: 12px; padding-bottom: 16px;">
+      <span class="card-title" style="text-align: center;">Recovery Day Tracker</span>
+      <div class="day-tracker">
+        <div class="day-block range1" data-day="1" onclick="selectDay(this)">1</div>
+        <div class="day-block range1" data-day="2" onclick="selectDay(this)">2</div>
+        <div class="day-block range1" data-day="3" onclick="selectDay(this)">3</div>
+        <div class="day-block range1" data-day="4" onclick="selectDay(this)">4</div>
+        <div class="day-block range1" data-day="5" onclick="selectDay(this)">5</div>
+        <div class="day-block range2" data-day="6" onclick="selectDay(this)">6</div>
+        <div class="day-block range2" data-day="7" onclick="selectDay(this)">7</div>
+        <div class="day-block range2" data-day="8" onclick="selectDay(this)">8</div>
+        <div class="day-block range2" data-day="9" onclick="selectDay(this)">9</div>
+        <div class="day-block range2" data-day="10" onclick="selectDay(this)">10</div>
+        <div class="day-block range3" data-day="11" onclick="selectDay(this)">11</div>
+        <div class="day-block range3" data-day="12" onclick="selectDay(this)">12</div>
+        <div class="day-block range3" data-day="13" onclick="selectDay(this)">13</div>
+        <div class="day-block range3" data-day="14" onclick="selectDay(this)">14</div>
+        <div class="day-block range3" data-day="15" onclick="selectDay(this)">15</div>
+      </div>
+      <div id="day-description" style="text-align: center; font-size: 13px; color: var(--text-dim);"></div>
+    </div>
+  </div>
+
+  <!-- Days 1-5 -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🛌</span>
+      <span class="card-title">Days 1–5: IN the Bed</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">🔑</span><span class="item-text">Valentina is <span class="highlight">horizontal</span>. Ryan handles ALL meals, chores, and diaper changes.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Days 6-10 -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🛋️</span>
+      <span class="card-title">Days 6–10: ON the Bed</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">🔑</span><span class="item-text">Valentina can <span class="highlight">sit up</span>; light movement (<span class="info">showering</span>) only.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Days 11-15 -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🚶</span>
+      <span class="card-title">Days 11–15: AROUND the Bed</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">🔑</span><span class="item-text"><span class="highlight">Short walks</span> in the house only.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Umbilical Care -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">🩹</span>
+      <span class="card-title">Umbilical Care</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">🔑</span><span class="item-text">Use Q-tips and alcohol on the <span class="warn">wound (not skin)</span> once plastic piece is removed</span></div>
+        <div class="item"><span class="item-bullet">🔑</span><span class="item-text">Keep cord <span class="warn">outside the diaper</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feeding Tracker -->
+  <div class="card" onclick="toggleCard(this)">
+    <div class="card-header">
+      <span class="card-icon">📊</span>
+      <span class="card-title">Feeding Tracker</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="card-content">
+        <div class="item"><span class="item-bullet">📱</span><span class="item-text">Use the <span class="info">Huckleberry App</span></span></div>
+        <div class="item"><span class="item-bullet">🎯</span><span class="item-text">Ensure <span class="highlight">8+ feedings</span> in 24 hours</span></div>
+        <div class="item"><span class="item-bullet">🍼</span><span class="item-text">If a bottle is used, <span class="warn">Ryan does the feeding</span></span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div> <!-- end content-wrapper -->
+
+<!-- Fixed Bottom Contact Bar -->
+<div class="contact-bar">
+  <a href="tel:3057531328" class="contact-btn">
+    📞 Dr. Carlos
+  </a>
+  <a href="tel:3056069364" class="contact-btn">
+    📞 Renata
+  </a>
+  <a href="https://maps.google.com/?q=1901+SW+172nd+Ave+Miramar+FL" class="contact-btn" target="_blank">
+    📍 Hospital
+  </a>
+  <a href="tel:911" class="contact-btn emergency">
+    🚨 911
+  </a>
+</div>
+
+<script>
+  // Phase Navigation
+  function showPhase(n) {
+    document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.phase-nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('phase-' + n).classList.add('active');
+    document.querySelector('[data-phase="' + n + '"]').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Card Toggle
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+
+  // Checklist
+  function toggleCheck(box) {
+    box.classList.toggle('checked');
+    const text = box.nextElementSibling;
+    text.classList.toggle('checked-text');
+  }
+
+  // Contraction Timer
+  let timerRunning = false;
+  let timerStart = null;
+  let timerInterval = null;
+  let contractions = [];
+
+  function toggleTimer() {
+    const btn = document.getElementById('timer-start');
+    if (!timerRunning) {
+      timerRunning = true;
+      timerStart = Date.now();
+      btn.textContent = 'STOP';
+      btn.className = 'timer-btn stop';
+      timerInterval = setInterval(updateTimer, 100);
+    } else {
+      timerRunning = false;
+      clearInterval(timerInterval);
+      const duration = (Date.now() - timerStart) / 1000;
+      contractions.push({ time: new Date(), duration: duration });
+      btn.textContent = 'START';
+      btn.className = 'timer-btn start';
+      document.getElementById('timer-display').textContent = '0:00';
+      renderHistory();
+      check511();
+    }
+  }
+
+  function updateTimer() {
+    const elapsed = (Date.now() - timerStart) / 1000;
+    const mins = Math.floor(elapsed / 60);
+    const secs = Math.floor(elapsed % 60);
+    document.getElementById('timer-display').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+  }
+
+  function resetTimer() {
+    timerRunning = false;
+    clearInterval(timerInterval);
+    contractions = [];
+    document.getElementById('timer-display').textContent = '0:00';
+    document.getElementById('timer-start').textContent = 'START';
+    document.getElementById('timer-start').className = 'timer-btn start';
+    document.getElementById('contraction-history').innerHTML = '';
+    document.getElementById('five-one-one-status').innerHTML = '';
+  }
+
+  function renderHistory() {
+    const el = document.getElementById('contraction-history');
+    if (contractions.length === 0) { el.innerHTML = ''; return; }
+    let html = '<h4>Recent Contractions</h4>';
+    const last5 = contractions.slice(-5).reverse();
+    last5.forEach((c, i) => {
+      const realIdx = contractions.length - 1 - i;
+      const dur = formatDuration(c.duration);
+      let interval = '—';
+      if (realIdx > 0) {
+        const gap = (c.time - contractions[realIdx - 1].time) / 60000;
+        interval = gap.toFixed(1) + ' min apart';
+      }
+      const timeStr = c.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      html += '<div class="contraction-log"><span>' + timeStr + '</span><span class="duration">' + dur + '</span><span class="interval">' + interval + '</span></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function formatDuration(secs) {
+    if (secs < 60) return Math.round(secs) + 's';
+    return Math.floor(secs / 60) + 'm ' + Math.round(secs % 60) + 's';
+  }
+
+  function check511() {
+    const el = document.getElementById('five-one-one-status');
+    if (contractions.length < 4) { el.innerHTML = ''; return; }
+    const last4 = contractions.slice(-4);
+    const intervals = [];
+    for (let i = 1; i < last4.length; i++) {
+      intervals.push((last4[i].time - last4[i-1].time) / 60000);
+    }
+    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+    const avgDuration = last4.reduce((a, b) => a + b.duration, 0) / last4.length;
+    const firstTime = last4[0].time;
+    const lastTime = last4[last4.length - 1].time;
+    const spanMinutes = (lastTime - firstTime) / 60000;
+
+    if (avgInterval <= 6 && avgDuration >= 45 && spanMinutes >= 30) {
+      el.innerHTML = '<div class="five-one-one ready">🚗 APPROACHING 5-1-1 — Consider heading to the hospital!</div>';
+    } else {
+      el.innerHTML = '<div class="five-one-one not-ready">Avg: ' + avgInterval.toFixed(1) + ' min apart • ' + Math.round(avgDuration) + 's long — Keep timing</div>';
+    }
+  }
+
+  // Day Tracker
+  const dayDescriptions = {
+    '1-5': '🛌 IN the Bed — Valentina is horizontal. Ryan handles everything.',
+    '6-10': '🛋️ ON the Bed — Valentina can sit up. Light movement only.',
+    '11-15': '🚶 AROUND the Bed — Short walks in the house only.'
+  };
+
+  function selectDay(el) {
+    document.querySelectorAll('.day-block').forEach(d => d.classList.remove('active-day'));
+    el.classList.add('active-day');
+    const day = parseInt(el.dataset.day);
+    let range;
+    if (day <= 5) range = '1-5';
+    else if (day <= 10) range = '6-10';
+    else range = '11-15';
+    document.getElementById('day-description').textContent = dayDescriptions[range];
+  }
+</script>
+
+</body>
+</html>

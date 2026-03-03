@@ -40,14 +40,18 @@
     overflow-x: hidden;
   }
 
+  .sticky-stack {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+  }
+
   .header {
     background: var(--bg);
     padding: 28px 20px 20px;
     text-align: center;
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
   }
 
   .header h1 {
@@ -83,9 +87,6 @@
   .back-link:active { background: rgba(248, 200, 220, 0.15); }
 
   .selection-summary {
-    position: sticky;
-    top: 92px;
-    z-index: 99;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
     padding: 10px 16px;
@@ -307,13 +308,15 @@
 </head>
 <body>
 
-<div class="header">
-  <h1>🍽️ Valentina's Menu</h1>
-  <div class="subtitle">Tap what you're craving — Ryan gets notified!</div>
-  <a href="index.html" class="back-link">← Back to Guide</a>
-</div>
+<div class="sticky-stack">
+  <div class="header">
+    <h1>🍽️ Valentina's Menu</h1>
+    <div class="subtitle">Tap what you're craving — Ryan gets notified!</div>
+    <a href="index.html" class="back-link">← Back to Guide</a>
+  </div>
 
-<div class="selection-summary" id="selection-summary">No selections yet.</div>
+  <div class="selection-summary" id="selection-summary">No selections yet.</div>
+</div>
 
 <div class="content-wrapper">
 

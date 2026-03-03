@@ -82,6 +82,20 @@
 
   .back-link:active { background: rgba(248, 200, 220, 0.15); }
 
+  .selection-summary {
+    position: sticky;
+    top: 92px;
+    z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .selection-summary strong { color: var(--accent2); }
+
   .instruction {
     text-align: center;
     padding: 16px 20px 8px;
@@ -299,6 +313,8 @@
   <a href="index.html" class="back-link">← Back to Guide</a>
 </div>
 
+<div class="selection-summary" id="selection-summary">No selections yet.</div>
+
 <div class="content-wrapper">
 
   <div class="instruction">Pick <strong>one item per meal</strong>, then hit send at the bottom.</div>
@@ -459,18 +475,28 @@
   };
 
   function selectItem(el, group) {
+    const isSelected = el.classList.contains('selected');
     // Deselect siblings
     el.parentElement.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
-    el.classList.add('selected');
-    selections[group] = el.dataset.value;
+    if (isSelected) {
+      selections[group] = null;
+    } else {
+      el.classList.add('selected');
+      selections[group] = el.dataset.value;
+    }
     updateSendButtons();
   }
 
   function selectChip(el, group) {
+    const isSelected = el.classList.contains('selected');
     // Single select within group
     document.getElementById(group).querySelectorAll('.dinner-chip').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    selections[group] = el.dataset.value;
+    if (isSelected) {
+      selections[group] = null;
+    } else {
+      el.classList.add('selected');
+      selections[group] = el.dataset.value;
+    }
     updateSendButtons();
   }
 
@@ -514,6 +540,29 @@
     return lines.join("\n");
   }
 
+  function buildSummary() {
+    const parts = [];
+    if (selections.breakfast) parts.push("Breakfast: " + selections.breakfast);
+    if (selections.lunch) parts.push("Lunch: " + selections.lunch);
+
+    const dp = selections['dinner-protein'];
+    const ds = selections['dinner-side'];
+    const dv = selections['dinner-salad'];
+    if (dp || ds || dv) {
+      let dinnerParts = [];
+      if (dp) dinnerParts.push(dp);
+      if (ds) dinnerParts.push(ds);
+      if (dv) dinnerParts.push(dv);
+      parts.push("Dinner: " + dinnerParts.join(" + "));
+    }
+
+    if (selections.snacks.length > 0) {
+      parts.push("Snacks: " + selections.snacks.join(", "));
+    }
+
+    return parts.join(" • ");
+  }
+
   function hasAnySelection() {
     return selections.breakfast || selections.lunch ||
            selections['dinner-protein'] || selections['dinner-side'] || selections['dinner-salad'] ||
@@ -523,26 +572,26 @@
   function updateSendButtons() {
     const area = document.getElementById('send-area');
     const preview = document.getElementById('preview');
+    const summary = document.getElementById('selection-summary');
 
     if (hasAnySelection()) {
       area.classList.remove('hidden');
       const msg = buildMessage();
       const encoded = encodeURIComponent(msg);
+      const summaryText = buildSummary();
 
       // SMS - works on both iOS and Android
       document.getElementById('sms-btn').href = "sms:6143286219&body=" + encoded;
       // Email
       document.getElementById('email-btn').href = "mailto:ryanradernyc@gmail.com?subject=" + encodeURIComponent("🍽️ Valentina's Meal Order") + "&body=" + encoded;
 
-      // Preview
-      let parts = [];
-      if (selections.breakfast) parts.push(selections.breakfast);
-      if (selections.lunch) parts.push(selections.lunch);
-      if (selections['dinner-protein']) parts.push(selections['dinner-protein']);
-      preview.innerHTML = '<strong>Selected:</strong> ' + parts.slice(0, 2).join(', ') + (parts.length > 2 ? '...' : '');
+      // Summary + Preview
+      summary.innerHTML = '<strong>Selected:</strong> ' + summaryText;
+      preview.innerHTML = '<strong>Selected:</strong> ' + summaryText;
     } else {
       area.classList.add('hidden');
       preview.innerHTML = '';
+      summary.textContent = 'No selections yet.';
     }
   }
 </script>

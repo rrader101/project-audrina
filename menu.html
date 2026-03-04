@@ -269,7 +269,7 @@
 
   .send-btn:active { transform: scale(0.97); }
   .send-btn.sms { background: var(--success); }
-  .send-btn.email { background: var(--accent3); }
+  .send-btn.whatsapp { background: var(--accent3); }
 
   .content-wrapper { padding-bottom: 90px; }
 
@@ -334,29 +334,29 @@
       <div class="radio"></div>
       <span class="label">Spinach omelette + 2 toasts</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="3 Almond tortillas + perico eggs + salsa">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="3 almond tortillas + perico eggs + salsa">
       <div class="radio"></div>
-      <span class="label">3 Almond tortillas + perico eggs + salsa</span>
+      <span class="label">3 almond tortillas + perico eggs + salsa</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Hard boiled eggs + avocado + smoothie (berries + vegan protein)">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Hard-boiled eggs + avocado + smoothie (berries + vegan protein)">
       <div class="radio"></div>
-      <span class="label">Hard boiled eggs + avocado + smoothie (berries + vegan protein)</span>
+      <span class="label">Hard-boiled eggs + avocado + smoothie (berries + vegan protein)</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Grilled cheese sandwich + scramble eggs">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Grilled cheese sandwich + scrambled eggs">
       <div class="radio"></div>
-      <span class="label">Grilled cheese sandwich + scramble eggs</span>
+      <span class="label">Grilled cheese sandwich + scrambled eggs</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Waffles + scramble eggs">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Waffles + scrambled eggs">
       <div class="radio"></div>
-      <span class="label">Waffles + scramble eggs</span>
+      <span class="label">Waffles + scrambled eggs</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="100gr of plantain + omelette + avocado">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="100 g plantain + omelette + avocado">
       <div class="radio"></div>
-      <span class="label">100gr of plantain + omelette + avocado</span>
+      <span class="label">100 g plantain + omelette + avocado</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Arepa + sardines (tomato)">
+    <div class="menu-item" onclick="selectItem(this, 'breakfast')" data-value="Arepa + sardines in tomato sauce">
       <div class="radio"></div>
-      <span class="label">Arepa + sardines (tomato)</span>
+      <span class="label">Arepa + sardines in tomato sauce</span>
     </div>
   </div>
 
@@ -382,9 +382,9 @@
       <div class="radio"></div>
       <span class="label">Pasta + tuna + red sauce</span>
     </div>
-    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Air fry tofu + vegetables (zucchini, green beans)">
+    <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Air-fried tofu + vegetables (zucchini, green beans)">
       <div class="radio"></div>
-      <span class="label">Air fry tofu + vegetables (zucchini, green beans)</span>
+      <span class="label">Air-fried tofu + vegetables (zucchini, green beans)</span>
     </div>
     <div class="menu-item" onclick="selectItem(this, 'lunch')" data-value="Mahi-mahi + mashed potatoes">
       <div class="radio"></div>
@@ -450,7 +450,7 @@
       <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Rice cakes + nut butter">Rice cakes + nut butter</div>
       <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Coconut yogurt + protein granola">Coconut yogurt + protein granola</div>
       <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Protein bars">Protein bars</div>
-      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Protein smoothie (chocolate + almond milk)">Protein smoothie (choco + almond milk)</div>
+      <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Protein smoothie (chocolate + almond milk)">Protein smoothie (chocolate + almond milk)</div>
       <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Chocolate bars (Hu)">Chocolate bars (Hu)</div>
       <div class="dinner-chip" onclick="toggleSnack(this)" data-value="Berry smoothie (berries + almond butter)">Berry smoothie (berries + almond butter)</div>
     </div>
@@ -464,7 +464,7 @@
 <!-- Send Buttons -->
 <div class="send-area hidden" id="send-area">
   <a id="sms-btn" href="#" class="send-btn sms">📱 Text Ryan</a>
-  <a id="email-btn" href="#" class="send-btn email">📧 Email Ryan</a>
+  <a id="whatsapp-btn" href="#" class="send-btn whatsapp">💬 WhatsApp Yamile</a>
 </div>
 
 <script>
@@ -585,8 +585,8 @@
 
       // SMS - works on both iOS and Android
       document.getElementById('sms-btn').href = "sms:6143286219&body=" + encoded;
-      // Email
-      document.getElementById('email-btn').href = "mailto:ryanradernyc@gmail.com?subject=" + encodeURIComponent("🍽️ Valentina's Meal Order") + "&body=" + encoded;
+      // WhatsApp
+      document.getElementById('whatsapp-btn').href = "https://wa.me/17542675552?text=" + encoded;
 
       // Summary + Preview
       summary.innerHTML = '<strong>Selected:</strong> ' + summaryText;
